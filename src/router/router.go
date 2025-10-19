@@ -3,7 +3,7 @@ package router
 import (
 	"cat-mail/src/router/routes"
 
-	"github.com/gorilla/mux" // One of the popular routing frameworks
+	"github.com/gorilla/mux"
 )
 
 func CreateRoutes() *mux.Router {

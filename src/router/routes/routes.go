@@ -31,7 +31,7 @@ var msgRoutes = []Route{
 	{
 		Uri:          "/message",
 		Method:       http.MethodPost,
-		Function:     controllers.ParseMessage,
+		Function:     controllers.ProcessMessage,
 		AuthRequired: false,
 	},
 }
