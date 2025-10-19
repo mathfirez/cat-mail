@@ -1,7 +1,26 @@
 package processor
 
-// Parses a message and adds to the queue.
+import (
+	"cat-mail/src/models"
+	"fmt"
+	"time"
+)
 
-func addToQueue() {
+// Adds a message to the queue.
+func AddToQueue(message models.Message) {
+	fmt.Println(message)
+}
+
+// Queries the database for messages and sends to the printer queue based on the interval defined in the .env file.
+// Sends a single message per run to avoid bloating.
+func Scheduler(interval int) {
+	seconds := time.Duration(interval) * time.Second
+	for {
+		time.Sleep(seconds)
+		//Querying new messages
+
+		// If no messages, sleep again
+		// Else, sends to printer, update message fields on DB based (see models.Message)
+	}
 
 }
