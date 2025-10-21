@@ -6,11 +6,13 @@ import (
 	"time"
 )
 
-// Adds a message to the queue.
+// Adds a message to the queue (db).
+// TODO
 func AddToQueue(message models.Message) {
 	fmt.Println(message)
 }
 
+// TODO: Deprecate here, will be moved to the client.
 // Queries the database for messages and sends to the printer queue based on the interval defined in the .env file.
 // Sends a single message per run to avoid bloating.
 func Scheduler(interval int) {

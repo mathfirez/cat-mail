@@ -26,6 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// TODO: will be deprecated, remove from here.
 	// Starts scheduler service.
 	go processor.Scheduler(interval)
 
