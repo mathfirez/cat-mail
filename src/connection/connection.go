@@ -27,13 +27,19 @@ func Load() (db *sql.DB) {
 		Port = 8000
 	}
 
-	ConnStr = "postgres://postgres:postgres@localhost/socialNetwork?sslmode=disable"
+	ConnStr = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PW"),
+		os.Getenv("DB_ADDRESS"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	)
 
 	db, err = sql.Open("postgres", ConnStr)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	//defer db.Close()

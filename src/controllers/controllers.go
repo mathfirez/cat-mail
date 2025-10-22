@@ -23,5 +23,5 @@ func ProcessMessage(w http.ResponseWriter, r *http.Request) {
 
 	processor.AddToQueue(message)
 
-	w.Write([]byte("TO-DO"))
+	w.Write([]byte("DONE!")) // TODO
 }
