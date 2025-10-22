@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"cat-mail/src/authenticator"
 	"cat-mail/src/models"
 	"cat-mail/src/processor"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -24,4 +26,11 @@ func ProcessMessage(w http.ResponseWriter, r *http.Request) {
 	processor.AddToQueue(message)
 
 	w.Write([]byte("DONE!")) // TODO
+}
+
+// TODO
+func SendMessage(w http.ResponseWriter, r *http.Request) {
+	allowed := authenticator.Authenticate() // TODO
+
+	fmt.Println(allowed)
 }

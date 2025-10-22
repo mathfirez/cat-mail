@@ -34,4 +34,6 @@ var msgRoutes = []Route{
 		Function:     controllers.ProcessMessage,
 		AuthRequired: false,
 	},
+
+	// TODO - Route where clients grab messages if available.
 }
