@@ -5,13 +5,12 @@ import (
 	"cat-mail/src/models"
 	"cat-mail/src/processor"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 )
 
-// ProcessMessage
+// Process incoming messages from the web page.
 func ProcessMessage(w http.ResponseWriter, r *http.Request) {
 	bodyReq, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -23,14 +22,49 @@ func ProcessMessage(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	processor.AddToQueue(message)
+	procStatus := processor.AddToQueue(message)
 
-	w.Write([]byte("DONE!")) // TODO
+	w.WriteHeader(procStatus)
 }
 
-// TODO
-func SendMessage(w http.ResponseWriter, r *http.Request) {
-	allowed := authenticator.Authenticate() // TODO
+// Authenticates the token and queries for the pending messages for the user related to the token. Replies with the message and http status code.
+// TODO - add comments for readability. Review.
+func GetMessage(w http.ResponseWriter, r *http.Request) {
+	headerToken := r.Header.Get("Authorization")
 
-	fmt.Println(allowed)
+	if headerToken == "" {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	userName, statusCode := authenticator.Authenticate(headerToken) // TODO
+
+	if statusCode != 200 {
+		w.WriteHeader(statusCode)
+		return
+	}
+
+	clientMessage, procStatus := processor.GetMessageFromUser(userName)
+
+	if procStatus != http.StatusOK {
+		w.WriteHeader(procStatus)
+		return
+	}
+
+	clientMessageJson, err := json.Marshal(clientMessage)
+
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest) // TODO - Not sure if the right thing to send
+		return
+	}
+	// TODO Update Message fields in the DB.
+	id := clientMessage.Id
+	processor.LogMessageSent(id)
+
+	// Clear messageID
+	clientMessage.Id = ""
+
+	w.WriteHeader(procStatus)
+	w.Write(clientMessageJson)
 }

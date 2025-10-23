@@ -35,5 +35,10 @@ var msgRoutes = []Route{
 		AuthRequired: false,
 	},
 
-	// TODO - Route where clients grab messages if available.
+	{
+		Uri:          "/message",
+		Method:       http.MethodGet,
+		Function:     controllers.GetMessage,
+		AuthRequired: true,
+	},
 }
