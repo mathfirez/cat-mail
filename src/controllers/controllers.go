@@ -39,7 +39,7 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 
 	userName, statusCode := authenticator.Authenticate(headerToken) // TODO
 
-	if statusCode != 200 {
+	if statusCode != http.StatusOK {
 		w.WriteHeader(statusCode)
 		return
 	}
