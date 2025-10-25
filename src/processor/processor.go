@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // Adds a message to the queue (db) and returns the corresponding http status code depending on the status of processing.
@@ -35,6 +36,8 @@ func AddToQueue(message models.Message) int {
 func GetMessageFromUser(userName string) (models.ClientMessage, int) {
 	db := connection.Load()
 	defer db.Close()
+
+	userName = strings.ToLower(userName)
 
 	var clientMessage models.ClientMessage
 
