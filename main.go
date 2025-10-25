@@ -16,7 +16,7 @@ func main() {
 	r := router.CreateRoutes()
 	fmt.Println("Routes created!")
 
-	fmt.Printf("Listening on port: %d", connection.Port)
+	fmt.Printf("Listening on port: %d\n", connection.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", connection.Port), r))
 
 	//db := connection.Load()

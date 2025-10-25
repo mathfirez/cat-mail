@@ -14,7 +14,7 @@ func Authenticate(headerToken string) (string, int) {
 	var userName string
 	row := db.QueryRow("select name from clients where token = $1", headerToken)
 
-	err := row.Scan(userName)
+	err := row.Scan(&userName)
 
 	if err != nil {
 		log.Println(err)

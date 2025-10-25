@@ -3,6 +3,7 @@ package processor
 import (
 	"cat-mail/src/connection"
 	"cat-mail/src/models"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -44,10 +45,16 @@ func GetMessageFromUser(userName string) (models.ClientMessage, int) {
 	err := row.Scan(&clientMessage.Id, &clientMessage.Author, &clientMessage.PostedOn, &clientMessage.Content)
 
 	if err != nil {
-		log.Println(err)
-		procStatus := http.StatusBadRequest //400
+		if err == sql.ErrNoRows {
+			procStatus := http.StatusNoContent
+			return models.ClientMessage{}, procStatus
+		} else {
+			log.Println(err)
+			procStatus := http.StatusBadRequest //400
 
-		return models.ClientMessage{}, procStatus
+			return models.ClientMessage{}, procStatus
+		}
+
 	}
 
 	procStatus := http.StatusOK
