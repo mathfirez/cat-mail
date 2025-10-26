@@ -55,10 +55,11 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 
 	clientMessage, procStatus := processor.GetMessageFromUser(userName)
 
-	if procStatus != http.StatusOK {
-		w.WriteHeader(procStatus)
-		return
-	}
+	//if procStatus != http.StatusOK {
+	//w.WriteHeader(procStatus)
+	// If authenticated, write procStatus and send an empty message.
+	//return
+	//}
 
 	clientMessageJson, err := json.Marshal(clientMessage)
 
@@ -67,9 +68,11 @@ func GetMessage(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest) // TODO - Not sure if the right thing to send
 		return
 	}
-	// TODO Update Message fields in the DB.
-	id := clientMessage.Id
-	processor.LogMessageSent(id)
+	// Update Message fields in the DB.
+	if procStatus == http.StatusOK {
+		id := clientMessage.Id
+		go processor.LogMessageSent(id)
+	}
 
 	// Clear messageID
 	clientMessage.Id = ""
