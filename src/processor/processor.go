@@ -6,7 +6,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -75,4 +78,46 @@ func LogMessageSent(id string) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func GetClientIP(r *http.Request) string {
+	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+
+	if ip == "::1" { //TODO: REMOVE -- TESTING ONLY
+		ip = "localhost"
+	}
+
+	return ip
+}
+
+func RequestsCache(clientIP string) bool {
+	fmt.Println("New request from:", clientIP)
+	var tooManyRequests bool
+
+	maxRequests, _ := strconv.Atoi(os.Getenv("API_PORT"))
+
+	db := connection.Load()
+	defer db.Close()
+
+	var requestsCount int
+
+	row := db.QueryRow("SELECT count(logged_on) from requests where ip = $1", clientIP)
+
+	row.Scan(requestsCount) // will always return something
+
+	if requestsCount >= maxRequests {
+		tooManyRequests = true
+		fmt.Println("Too many requests for", clientIP, ". Total: ", requestsCount)
+		return tooManyRequests
+	}
+
+	_, err := db.Query("INSERT INTO requests (ip, logged_on) VALUES ($1, CURRENT_TIMESTAMP)", clientIP)
+
+	if err != nil {
+		log.Println("Unable to log request: ", err)
+	} else {
+		fmt.Println("Logged request for", clientIP)
+	}
+
+	return tooManyRequests
 }
