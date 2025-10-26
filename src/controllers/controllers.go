@@ -30,6 +30,15 @@ func ProcessMessage(w http.ResponseWriter, r *http.Request) {
 // Authenticates the token and queries for the pending messages for the user related to the token. Replies with the message and http status code.
 // TODO - add comments for readability. Review.
 func GetMessage(w http.ResponseWriter, r *http.Request) {
+	clientIP := processor.GetClientIP(r) //TODO Error handling
+
+	tooManyRequests := processor.RequestsCache(clientIP)
+
+	if tooManyRequests {
+		w.WriteHeader(http.StatusTooManyRequests)
+		return
+	}
+
 	headerToken := r.Header.Get("Authorization")
 
 	if headerToken == "" {
